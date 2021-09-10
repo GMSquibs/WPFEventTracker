@@ -14,6 +14,15 @@ namespace WPFEventTracker.Models
         private string _state;
         private string _zip;
 
+        public Address(string address1, string address2, string city, string state, string zip)
+        {
+            Address1 = address1;
+            Address2 = address2;
+            City = city;
+            State = state;
+            Zip = zip;
+        }
+
         public Address()
         {
 

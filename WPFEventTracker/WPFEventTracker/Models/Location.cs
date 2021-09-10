@@ -10,9 +10,19 @@ namespace WPFEventTracker.Models
     {
         private string _locationName;
         private string _locationOwnerFirstName;
-        private string _locationOwnerSecondName;
+        private string _locationOwnerLastName;
         private string _locationContactNumber;
         private Address _locationAddress;
+        public Location(string locationName, string locationOwnerFirstName, string locationOwnerLastName,
+            string locationContactNumber, Address locationAddress)
+        {
+            LocationName = locationName;
+            LocationOwnerFirstName = locationOwnerFirstName;
+            LocationOwnerLastName = locationOwnerLastName;
+            LocationContactNumber = locationContactNumber;
+            LocationAddress = locationAddress;
+        }
+
         public Location()
         {
 
@@ -30,10 +40,10 @@ namespace WPFEventTracker.Models
             set { _locationOwnerFirstName = value; }
         }
 
-        public string LocationOwnerSecondName
+        public string LocationOwnerLastName
         {
-            get { return _locationOwnerSecondName; }
-            set { _locationOwnerSecondName = value; }
+            get { return _locationOwnerLastName; }
+            set { _locationOwnerLastName = value; }
         }
 
         public string LocationContactNumber
