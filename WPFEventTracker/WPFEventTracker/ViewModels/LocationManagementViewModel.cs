@@ -2,34 +2,92 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Input;
 using WPFEventTracker.Models;
 
 namespace WPFEventTracker.ViewModels
 {
-    public class LocationManagementViewModel: INotifyPropertyChanged
+    class LocationManagementViewModel: INotifyPropertyChanged
     {
-        private List<Location> _locations;
         public event PropertyChangedEventHandler PropertyChanged;
+        //protected void OnPropertyChanged([CallerMemberName] string name = null)
+        //{
+        //    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+        //}
 
-        protected void OnPropertyChanged([CallerMemberName] string name = null)
+        protected void OnPropertyChanged<T>(Expression<Func<T>> action)
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
-        }
-        public LocationManagementViewModel()
-        {
-            Locations = new DataAccess.DatabaseAccess().GetLocations();
+            var propertyName = GetPropertyName(action);
+            this.OnPropertyChanged(propertyName);
         }
 
-        public List<Location> Locations
+        protected void OnPropertyChanged(string property)
         {
-            get { return _locations; }
-            set { _locations = value;
-                OnPropertyChanged();
+            if (this.PropertyChanged != null)
+            {
+                this.PropertyChanged(this, new PropertyChangedEventArgs(property));
             }
         }
+
+        protected static string GetPropertyName<T>(Expression<Func<T>> action)
+        {
+            return ((MemberExpression)action.Body).Member.Name;
+        }
+
+        public LocationManagementViewModel()
+        {
+            Model = new Location();
+            UpdateCommand = new Updater();
+        }
+
+        private Location _model;
+
+        public Location Model
+        {
+            get { return _model; }
+            set 
+            { 
+                _model = value;                
+                OnPropertyChanged(() => Model);
+            }
+        }
+
+        private ICommand _mUpdater;
+
+        public ICommand UpdateCommand
+        {
+            get {
+                    if (_mUpdater == null)
+                    {
+                        _mUpdater = new Updater();
+                    }
+                    return _mUpdater;
+                }
+            set
+            {
+                _mUpdater = value;            
+            }
+        }
+
+        private class Updater : ICommand
+        {
+            public event EventHandler CanExecuteChanged;
+            public bool CanExecute(object parm)
+            {
+                return true;
+            }
+
+            public void Execute(object parm)
+            { 
+            
+            }
+        }
+        
+
 
     }
 }

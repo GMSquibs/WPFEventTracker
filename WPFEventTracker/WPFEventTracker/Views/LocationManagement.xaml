@@ -5,9 +5,12 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WPFEventTracker"
         mc:Ignorable="d"
-        Title="Location Management" Height="300" Width="300">
+        Title="Location Management" Height="300" Width="300"
+		d:DataContext="{d:DesignInstance ViewModels:LocationManagementViewModel, IsDesignTimeCreatable=true}">
     <Grid>
         <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
@@ -20,6 +23,9 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <DataGrid></DataGrid>
+        <DataGrid Name="Locations"  Grid.Row="1" Grid.Column="1" ItemsSource="{Binding Model.Locations}"></DataGrid>
+        <Button Grid.Row="2" Grid.Column="1" Content="Create" Command="{Binding Model.CreateLocationTableCommand}"/>
+        <Button Grid.Row="2" Grid.Column="2" Content="Update" Command="{Binding Model.UpdateLocationTableCommand}"/>
+        <Button Grid.Row="2" Grid.Column="3" Content="Delete" Command="{Binding Model.DeleteLocationTableCommand}"/>
     </Grid>
 </Window>

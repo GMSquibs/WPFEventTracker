@@ -98,6 +98,7 @@
     <Compile Include="DataAccess\LoginManagement.cs" />
     <Compile Include="Models\Address.cs" />
     <Compile Include="Models\Event.cs" />
+    <Compile Include="Models\RelayCommand.cs" />
     <Compile Include="ViewModels\ClientManagementViewModel.cs" />
     <Compile Include="ViewModels\EmployeeManagementViewModel.cs" />
     <Compile Include="ViewModels\EventManagementViewModel.cs" />

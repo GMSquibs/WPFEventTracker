@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.Common;
 using System.Data.SqlClient;
 using System.Linq;
@@ -15,53 +16,43 @@ namespace WPFEventTracker.DataAccess
         public List<Location> _locations;
         public DatabaseAccess()
         {
-
+            string localConnection = "Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=E:\\GitRepo\\WPFEventTracker\\WPFEventTracker\\WPFEventTracker\\EventTracker.mdf;Integrated Security=True;Connect Timeout=30";
+            SqlSb = new SqlConnectionStringBuilder(localConnection);
         }
 
-        public List<Location> GetLocations()
+        public SqlConnectionStringBuilder SqlSb
         {
-            using (SqlConnection conn = new SqlConnection(_sqlsb.ConnectionString))
+            get { return _sqlsb; }
+            set { _sqlsb = value; }
+        }
+
+        public DataTable GetLocations()
+        {
+            _locations = new List<Location>();
+            try 
             {
-                conn.Open();
-                SqlCommand command = new SqlCommand();
-                command.Connection = conn;
-                command.CommandText = $"SELECT * FROM Locations l " +
-                                       "LEFT JOIN Addresses a on l.Addressid = a.Id";
-                command.CommandTimeout = 30;
-
-                using (var rdr = command.ExecuteReader())
+                using (SqlConnection conn = new SqlConnection(_sqlsb.ConnectionString))
                 {
-                    while (rdr.Read())
-                    {
-                        Address locationAddress = null;
-                        if (rdr["AddressId"].ToString() != null)
-                        {
-                            locationAddress = new Address()
-                            {
-                                Address1 = rdr["Address1"].ToString(),
-                                Address2 = rdr["Address2"].ToString(),
-                                City = rdr["City"].ToString(),
-                                State = rdr["State"].ToString(),
-                                Zip = rdr["ZipCode"].ToString()
-                            };
-                        }
+                    conn.Open();
+                    SqlCommand command = new SqlCommand();
+                    command.Connection = conn;
+                    command.CommandText = $"SELECT * FROM vw_Locations";
+                    command.CommandTimeout = 30;
 
-                        Location newLocation = new Location()
-                        {
-                            LocationName = rdr["LocationName"].ToString(),
-                            LocationAddress = locationAddress,
-                            LocationContactNumber = rdr["LocationContactNumber"].ToString(),
-                            LocationOwnerFirstName = rdr["LocationOwnerFirstName"].ToString(),
-                            LocationOwnerLastName = rdr["LocationOwnerLastName"].ToString()
-                        };
-
-                        _locations.Add(newLocation);
-                        
-                    }
+                    DataTable dt = new DataTable();
+                    SqlDataAdapter a = new SqlDataAdapter(command);
+                    a.Fill(dt);                        
+                    
+                    conn.Close();
+                    return dt;
                 }
-                return _locations;
-            }
-            
+            } 
+            catch(Exception e) 
+            {
+                string error = e.Message;
+                return null;
+            } 
+ 
         }
 
         public DbDataReader GetClients()
@@ -106,7 +97,66 @@ namespace WPFEventTracker.DataAccess
             }
         }
 
-        public void Dispose()
+        public void CreateLocation(string locationName, string locationOwnerFirstName, string locationOwnerLastName, string locationContactNumber,
+            string address1, string address2, string city, string state, string zipCode)
+        {
+            using (SqlConnection conn = new SqlConnection(_sqlsb.ConnectionString))
+            {
+                conn.Open();
+                SqlCommand locationCommand = new SqlCommand();
+                locationCommand.Connection = conn;
+                locationCommand.CommandType = CommandType.StoredProcedure;
+                locationCommand.CommandText = "CreateLocation";
+                locationCommand.CommandTimeout = 30;
+
+                locationCommand.Parameters.AddRange(
+                    new[]
+                    {
+                        new SqlParameter("@LocationName", SqlDbType.VarChar) { Value = locationName  },
+                        new SqlParameter("@LocationOwnerFirstName", SqlDbType.VarChar) { Value = locationOwnerFirstName },
+                        new SqlParameter("@LocationOwnerLastName", SqlDbType.VarChar) { Value = locationOwnerLastName },
+                        new SqlParameter("@LocationContactNumber", SqlDbType.VarChar) { Value = locationContactNumber },
+                        new SqlParameter("@LocationName", SqlDbType.VarChar) { Value = locationName  }
+                    });
+
+                locationCommand.ExecuteReader();
+                conn.Close();
+            }
+
+            if (!string.IsNullOrEmpty(address1) || !string.IsNullOrEmpty(address2) || !string.IsNullOrEmpty(city) ||
+                !string.IsNullOrEmpty(state) || !string.IsNullOrEmpty(zipCode))
+            {
+                CreateAddress(address1, address2,  city, state,  zipCode);
+            }
+        }
+
+        public void CreateAddress(string address1, string address2, string city, string state, string zipCode)
+        {
+            using (SqlConnection conn = new SqlConnection(_sqlsb.ConnectionString))
+            {
+                conn.Open();
+                SqlCommand addressCommand = new SqlCommand();
+                addressCommand.Connection = conn;
+                addressCommand.CommandType = CommandType.StoredProcedure;
+                addressCommand.CommandText = "CreateAddress";
+                addressCommand.CommandTimeout = 30;
+
+                addressCommand.Parameters.AddRange(
+                    new[]
+                    {
+                        new SqlParameter("@Address1", SqlDbType.VarChar) { Value = address1 },
+                        new SqlParameter("@Address2", SqlDbType.VarChar) { Value = address2 },
+                        new SqlParameter("@City", SqlDbType.VarChar) { Value = city},
+                        new SqlParameter("@State", SqlDbType.VarChar) { Value = state },
+                        new SqlParameter("@ZipCode", SqlDbType.VarChar) { Value = zipCode  }
+                    });
+
+                addressCommand.ExecuteReader();
+                conn.Close();
+            }
+        }
+
+public void Dispose()
         {
             if (this != null)
             {
