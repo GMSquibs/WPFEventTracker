@@ -6,13 +6,13 @@ using System.Threading.Tasks;
 
 namespace WPFEventTracker.Models
 {
-    public class Employee
+    public class EmployeeModel
     {
         private string _employeeFirstName;
         private string _employeeLastName;
         private string _employeeContactNumber;
         
-        public Employee()
+        public EmployeeModel()
         {
 
         }

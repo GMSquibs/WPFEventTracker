@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 
 namespace WPFEventTracker.Models
 {
-    public class Menu
+    public class MenuModel
     {
         private string _beverageName;
         private int _servings;
         private decimal _price;
-        public Menu()
+        public MenuModel()
         {
 
         }

@@ -6,19 +6,19 @@ using System.Threading.Tasks;
 
 namespace WPFEventTracker.Models
 {
-    public class Event
+    public class EventModel
     {
         private DateTime _eventDate;
         private TimeSpan _eventTime;
-        private Location _eventLocation;
-        private Client _client;
-        private List<Employee> _employeesWorkingEvent;
-        private List<Menu> _eventMenu;
+        private LocationModel _eventLocation;
+        private ClientModel _client;
+        private List<EmployeeModel> _employeesWorkingEvent;
+        private List<MenuModel> _eventMenu;
         private string _eventNotes;
         private decimal _eventCost;
         private int _headCount;
 
-        public Event()
+        public EventModel()
         {
 
         }
@@ -35,25 +35,25 @@ namespace WPFEventTracker.Models
             set { _eventTime = value; }
         }
 
-        public Location EventLocation
+        public LocationModel EventLocation
         {
             get { return _eventLocation; }
             set { _eventLocation = value; }
         }
 
-        public Client Client
+        public ClientModel Client
         {
             get { return _client; }
             set { _client = value; }
         }
 
-        public List<Menu> EventMenu
+        public List<MenuModel> EventMenu
         {
             get { return _eventMenu; }
             set { _eventMenu = value; }
         }
 
-        public List<Employee> EmployeesWorkingEvent
+        public List<EmployeeModel> EmployeesWorkingEvent
         {
             get { return _employeesWorkingEvent; }
             set { _employeesWorkingEvent = value; }

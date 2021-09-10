@@ -6,14 +6,14 @@ using System.Threading.Tasks;
 
 namespace WPFEventTracker.Models
 {
-    public class Client
+    public class ClientModel
     {
         private string _firstName;
         private string _lastName;
         private string _contactNumber;
         private string _email;        
 
-        public Client()
+        public ClientModel()
         {
 
         }

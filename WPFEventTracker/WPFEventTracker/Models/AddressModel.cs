@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace WPFEventTracker.Models
 {
-    public class Address
+    public class AddressModel
     {
         private string _address1;
         private string _address2;
@@ -14,7 +14,7 @@ namespace WPFEventTracker.Models
         private string _state;
         private string _zip;
 
-        public Address(string address1, string address2, string city, string state, string zip)
+        public AddressModel(string address1, string address2, string city, string state, string zip)
         {
             Address1 = address1;
             Address2 = address2;
@@ -23,7 +23,7 @@ namespace WPFEventTracker.Models
             Zip = zip;
         }
 
-        public Address()
+        public AddressModel()
         {
 
         }

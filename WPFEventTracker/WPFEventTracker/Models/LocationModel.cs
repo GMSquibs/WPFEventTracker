@@ -7,10 +7,11 @@ using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using WPFEventTracker.DataAccess;
 
 namespace WPFEventTracker.Models
 {
-    public class Location: INotifyPropertyChanged
+    public class LocationModel: INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
         //protected void OnPropertyChanged([CallerMemberName] string name = null)
@@ -41,10 +42,10 @@ namespace WPFEventTracker.Models
         private string _locationOwnerFirstName;
         private string _locationOwnerLastName;
         private string _locationContactNumber;
-        private Address _locationAddress;
+        private AddressModel _locationAddress;
         private DataTable _locations;
-        public Location(string locationName, string locationOwnerFirstName, string locationOwnerLastName,
-            string locationContactNumber, Address locationAddress)
+        public LocationModel(string locationName, string locationOwnerFirstName, string locationOwnerLastName,
+            string locationContactNumber, AddressModel locationAddress)
         {
             LocationName = locationName;
             LocationOwnerFirstName = locationOwnerFirstName;
@@ -53,9 +54,9 @@ namespace WPFEventTracker.Models
             LocationAddress = locationAddress;
         }
 
-        public Location()
+        public LocationModel()
         {
-            Locations = new DataAccess.DatabaseAccess().GetLocations();
+            Locations = new DatabaseAccess().GetLocations();
             UpdateLocationTableCommand = new RelayCommand(UpdateLocation,IsAuthorized);
             DeleteLocationTableCommand = new RelayCommand(DeleteLocation, IsAuthorized);
             CreateLocationTableCommand = new RelayCommand(CreateLocation, IsAuthorized);
@@ -130,7 +131,7 @@ namespace WPFEventTracker.Models
             set { _locationContactNumber = value; }
         }
 
-        public Address LocationAddress
+        public AddressModel LocationAddress
         {
             get { return _locationAddress; }
             set { _locationAddress = value; }
@@ -158,7 +159,22 @@ namespace WPFEventTracker.Models
 
         public void CreateLocation()
         {
-            var createNewLocation = new DataAccess.DatabaseAccess().CreateLocation();
+
+            using (DatabaseAccess createNewLocation = new DatabaseAccess())
+            {
+                createNewLocation.CreateLocation
+                    (
+                     this.LocationName,
+                     this.LocationOwnerFirstName,
+                     this.LocationOwnerLastName,
+                     this.LocationContactNumber,
+                     "Address1",
+                     "Address2",
+                     "City",
+                     "State",
+                     "ZipCode"
+                     );
+            }
         }
     }
 }

@@ -40,13 +40,13 @@ namespace WPFEventTracker.ViewModels
 
         public LocationManagementViewModel()
         {
-            Model = new Location();
+            Model = new LocationModel();
             UpdateCommand = new Updater();
         }
 
-        private Location _model;
+        private LocationModel _model;
 
-        public Location Model
+        public LocationModel Model
         {
             get { return _model; }
             set 

@@ -13,7 +13,7 @@ namespace WPFEventTracker.DataAccess
     public class DatabaseAccess: IDisposable
     {
         private SqlConnectionStringBuilder _sqlsb;
-        public List<Location> _locations;
+        public List<LocationModel> _locations;
         public DatabaseAccess()
         {
             string localConnection = "Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=E:\\GitRepo\\WPFEventTracker\\WPFEventTracker\\WPFEventTracker\\EventTracker.mdf;Integrated Security=True;Connect Timeout=30";
@@ -28,7 +28,7 @@ namespace WPFEventTracker.DataAccess
 
         public DataTable GetLocations()
         {
-            _locations = new List<Location>();
+            _locations = new List<LocationModel>();
             try 
             {
                 using (SqlConnection conn = new SqlConnection(_sqlsb.ConnectionString))
@@ -119,7 +119,7 @@ namespace WPFEventTracker.DataAccess
                         new SqlParameter("@LocationName", SqlDbType.VarChar) { Value = locationName  }
                     });
 
-                locationCommand.ExecuteReader();
+                locationCommand.ExecuteNonQuery();
                 conn.Close();
             }
 
@@ -130,7 +130,66 @@ namespace WPFEventTracker.DataAccess
             }
         }
 
+        public void UpdateLocation(string locationName, string locationOwnerFirstName, string locationOwnerLastName, string locationContactNumber,
+            string address1, string address2, string city, string state, string zipCode)
+        {
+            using (SqlConnection conn = new SqlConnection(_sqlsb.ConnectionString))
+            {
+                conn.Open();
+                SqlCommand locationCommand = new SqlCommand();
+                locationCommand.Connection = conn;
+                locationCommand.CommandType = CommandType.StoredProcedure;
+                locationCommand.CommandText = "UpdateLocation";
+                locationCommand.CommandTimeout = 30;
+
+                locationCommand.Parameters.AddRange(
+                    new[]
+                    {
+                        new SqlParameter("@LocationName", SqlDbType.VarChar) { Value = locationName  },
+                        new SqlParameter("@LocationOwnerFirstName", SqlDbType.VarChar) { Value = locationOwnerFirstName },
+                        new SqlParameter("@LocationOwnerLastName", SqlDbType.VarChar) { Value = locationOwnerLastName },
+                        new SqlParameter("@LocationContactNumber", SqlDbType.VarChar) { Value = locationContactNumber },
+                        new SqlParameter("@LocationName", SqlDbType.VarChar) { Value = locationName  }
+                    });
+
+                locationCommand.ExecuteNonQuery();
+                conn.Close();
+            }
+
+            if (!string.IsNullOrEmpty(address1) || !string.IsNullOrEmpty(address2) || !string.IsNullOrEmpty(city) ||
+                !string.IsNullOrEmpty(state) || !string.IsNullOrEmpty(zipCode))
+            {
+                CreateAddress(address1, address2, city, state, zipCode);
+            }
+        }
+
         public void CreateAddress(string address1, string address2, string city, string state, string zipCode)
+        {
+            using (SqlConnection conn = new SqlConnection(_sqlsb.ConnectionString))
+            {
+                conn.Open();
+                SqlCommand addressCommand = new SqlCommand();
+                addressCommand.Connection = conn;
+                addressCommand.CommandType = CommandType.StoredProcedure;
+                addressCommand.CommandText = "UpdateAddress";
+                addressCommand.CommandTimeout = 30;
+
+                addressCommand.Parameters.AddRange(
+                    new[]
+                    {
+                        new SqlParameter("@Address1", SqlDbType.VarChar) { Value = address1 },
+                        new SqlParameter("@Address2", SqlDbType.VarChar) { Value = address2 },
+                        new SqlParameter("@City", SqlDbType.VarChar) { Value = city},
+                        new SqlParameter("@State", SqlDbType.VarChar) { Value = state },
+                        new SqlParameter("@ZipCode", SqlDbType.VarChar) { Value = zipCode  }
+                    });
+
+                addressCommand.ExecuteNonQuery();
+                conn.Close();
+            }
+        }
+
+        public void UpdateAddress(string address1, string address2, string city, string state, string zipCode)
         {
             using (SqlConnection conn = new SqlConnection(_sqlsb.ConnectionString))
             {
@@ -151,12 +210,12 @@ namespace WPFEventTracker.DataAccess
                         new SqlParameter("@ZipCode", SqlDbType.VarChar) { Value = zipCode  }
                     });
 
-                addressCommand.ExecuteReader();
+                addressCommand.ExecuteNonQuery();
                 conn.Close();
             }
         }
 
-public void Dispose()
+        public void Dispose()
         {
             if (this != null)
             {
